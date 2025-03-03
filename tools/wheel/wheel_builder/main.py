@@ -1,5 +1,5 @@
 # Entry point for the wheel build machinery; run with --help for more details.
-# On Linux, wheels are build using Docker. On macOS, the host environment is
+# On Linux, wheels are built using Docker. On macOS, the host environment is
 # used.
 
 import sys
