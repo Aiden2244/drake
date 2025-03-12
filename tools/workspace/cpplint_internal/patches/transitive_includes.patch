@@ -31,9 +31,6 @@ index 7a8b8ab..6ce7164 100755
 +    return False
 +
 +
-+print("THIS VERSION OF CPPLINT HAS BEEN MODIFIED BY HAND")
-+
-+
  def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
                                io=codecs):
    """Reports for missing stl includes.
