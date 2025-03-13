@@ -1,8 +1,23 @@
 diff --git a/cpplint.py b/cpplint.py
-index 7a8b8ab..6ce7164 100755
+index 7a8b8ab..235ba11 100755
 --- cpplint.py
 +++ cpplint.py
-@@ -6166,6 +6166,34 @@ def FilesBelongToSameModule(filename_cc, filename_h):
+@@ -6152,12 +6152,14 @@ def FilesBelongToSameModule(filename_cc, filename_h):
+ 
+   filename_cc = filename_cc.replace('/public/', '/')
+   filename_cc = filename_cc.replace('/internal/', '/')
++  filename_cc = filename_cc.replace('/test/', '/')
+ 
+   filename_h = filename_h[:-(len(fileinfo_h.Extension()))]
+   if filename_h.endswith('-inl'):
+     filename_h = filename_h[:-len('-inl')]
+   filename_h = filename_h.replace('/public/', '/')
+   filename_h = filename_h.replace('/internal/', '/')
++  filename_h = filename_h.replace('/test/', '/')
+ 
+   files_belong_to_same_module = filename_cc.endswith(filename_h)
+   common_path = ''
+@@ -6166,6 +6168,34 @@ def FilesBelongToSameModule(filename_cc, filename_h):
    return files_belong_to_same_module, common_path
  
  
@@ -31,10 +46,13 @@ index 7a8b8ab..6ce7164 100755
 +    return False
 +
 +
++print("THIS VERSION OF CPPLINT HAS BEEN MODIFIED BY HAND")
++
++
  def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
                                io=codecs):
    """Reports for missing stl includes.
-@@ -6221,10 +6249,36 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
+@@ -6221,10 +6251,36 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
          if prefix.endswith('std::') or not prefix.endswith('::'):
            required[header] = (linenum, template)
  
@@ -49,7 +67,7 @@ index 7a8b8ab..6ce7164 100755
 +
 +  # Use the absolute path so that matching works properly.
 +  abs_filename = FileInfo(filename).FullName()
-+
++  print(f"DEBUG: Searching for files in directory {abs_filename}")
 +  # For Emacs's flymake.
 +  # If cpplint is invoked from Emacs's flymake, a temporary file is generated
 +  # by flymake and that file name might end with '_flymake.cc'. In that case,
