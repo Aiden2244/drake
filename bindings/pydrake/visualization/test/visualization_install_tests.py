@@ -21,10 +21,13 @@ class TestVisualizationInstalled(unittest.TestCase):
         print(f"DEBUG: bin_path = {bin_path}")
         print(f"bin_path exists = {exists(bin_path)}")
         
+        print(f"DEBUG: python interpreter before checking output = {sys.executable}")
         text = install_test_helper.check_output([bin_path, "--help"])
         print(f"DEBUG: text = {text}")
         
+        print(f"DEBUG: about to run self.assertIn() check in test_meldis_help()")
         self.assertIn("usage: meldis ", text)
+        print(f"DEBUG: reached the end of function test_meldis_help()")
 
     # # TODO(#21023) This test is a bit too tricky in CI.
     # @unittest.skipIf(sys.platform == "darwin", "Skipped for tricky macOS CI")
@@ -55,4 +58,5 @@ class TestVisualizationInstalled(unittest.TestCase):
 
 if __name__ == '__main__':
     print("Testing visualization_install_tests.py AAAAAAA")
+    print(f"DEBUG: python interpreter = {sys.executable}")
     unittest.main()

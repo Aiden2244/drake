@@ -25,11 +25,12 @@ def main():
     print(f"DEBUG: site_dir = {site_dir}")
     print(f"DEBUG: site_dir exists = {exists(site_dir)}")
     
+    print(f"DEBUG: python interpreter in run_install_meldis = {sys.executable}")
     sys.path.insert(0, site_dir)
 
     # Execute the imported main.
-    from pydrake.visualization.meldis import _main
-    _main()
+    # from pydrake.visualization.meldis import _main
+    # _main()
 
 
 assert __name__ == "__main__"

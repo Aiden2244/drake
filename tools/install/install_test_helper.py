@@ -135,6 +135,7 @@ def check_output(*args, **kwargs):
     else:
         env = os.environ
     print(f"DEBUG: in file install_test_helper.py")
+    print(f"DEBUG: python interpreter before running subprocess = {sys.executable}")
     return subprocess.check_output(
         cwd='/', env=env, *args, **kwargs).decode('utf8')
 
