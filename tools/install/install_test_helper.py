@@ -134,6 +134,7 @@ def check_output(*args, **kwargs):
         env = kwargs.pop('env')
     else:
         env = os.environ
+    print(f"DEBUG: in file install_test_helper.py")
     return subprocess.check_output(
         cwd='/', env=env, *args, **kwargs).decode('utf8')
 

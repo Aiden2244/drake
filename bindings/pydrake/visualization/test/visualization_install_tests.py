@@ -1,4 +1,4 @@
-from os.path import join
+from os.path import join, exists
 import sys
 import unittest
 
@@ -19,7 +19,8 @@ class TestVisualizationInstalled(unittest.TestCase):
         # itself.
         bin_path = join(install_dir, "bin", "meldis")
         print(f"DEBUG: bin_path = {bin_path}")
-
+        print(f"bin_path exists = {exists(bin_path)}")
+        
         text = install_test_helper.check_output([bin_path, "--help"])
         print(f"DEBUG: text = {text}")
         

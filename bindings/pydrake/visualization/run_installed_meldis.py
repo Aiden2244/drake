@@ -4,7 +4,7 @@
 Runs Meldis from an install tree.
 """
 
-from os.path import isdir, join, dirname, realpath
+from os.path import isdir, join, dirname, realpath, exists
 import sys
 
 
@@ -17,11 +17,13 @@ def main():
     assert isdir(join(prefix_dir, "bin")), f"Bad location: {prefix_dir}"
     print(f"DEBUG: assertion passed")
     
-    version = f"{sys.version_info.major}.{sys.version_info.minor}"
+    # version = f"{sys.version_info.major}.{sys.version_info.minor}"
+    version = "3.12"
     print(f"DEBUG: version = {version}")
     
     site_dir = join(prefix_dir, f"lib/python{version}/site-packages")
     print(f"DEBUG: site_dir = {site_dir}")
+    print(f"DEBUG: site_dir exists = {exists(site_dir)}")
     
     sys.path.insert(0, site_dir)
 
