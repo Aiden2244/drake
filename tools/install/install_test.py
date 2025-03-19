@@ -59,6 +59,9 @@ def _convert_test_command_to_test_case_name(test_command):
 
 
 def main():
+    print(f"DEBUG: in main entrypoint of install tests, install_test.py")
+    print(f"DEBUG: python interpreter in install_test.py = {sys.executable}")
+
     # Locate the command-line argument that provides the list of test commands.
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('--install_tests_filename', required=True)

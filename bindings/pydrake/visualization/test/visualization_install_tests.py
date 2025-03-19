@@ -20,40 +20,41 @@ class TestVisualizationInstalled(unittest.TestCase):
         bin_path = join(install_dir, "bin", "meldis")
         print(f"DEBUG: bin_path = {bin_path}")
         print(f"bin_path exists = {exists(bin_path)}")
-        
+        # import ipdb; ipdb.set_trace() 
         print(f"DEBUG: python interpreter before checking output = {sys.executable}")
-        text = install_test_helper.check_output([bin_path, "--help"])
+        text = install_test_helper.check_output([sys.executable ,bin_path, "--help"])
         print(f"DEBUG: text = {text}")
         
         print(f"DEBUG: about to run self.assertIn() check in test_meldis_help()")
         self.assertIn("usage: meldis ", text)
         print(f"DEBUG: reached the end of function test_meldis_help()")
 
-    # # TODO(#21023) This test is a bit too tricky in CI.
+    # TODO(#21023) This test is a bit too tricky in CI.
     # @unittest.skipIf(sys.platform == "darwin", "Skipped for tricky macOS CI")
-    # def test_model_visualizer_help(self):
-    #     """Ensures we can call `./bin/model_visualizer --help` from install."""
-    #     # Get install directory.
-    #     install_dir = install_test_helper.get_install_dir()
-    #     # N.B. Do not update PYTHONPATH, as the script should handle that
-    #     # itself.
-    #     bin_path = join(install_dir, "bin", "model_visualizer")
-    #     text = install_test_helper.check_output([bin_path, "--help"])
-    #     self.assertIn("usage: model_visualizer ", text)
+    def test_model_visualizer_help(self):
+        """Ensures we can call `./bin/model_visualizer --help` from install."""
+        # Get install directory.
+        install_dir = install_test_helper.get_install_dir()
+        # N.B. Do not update PYTHONPATH, as the script should handle that
+        # itself.
+        bin_path = join(install_dir, "bin", "model_visualizer")
+        text = install_test_helper.check_output([sys.executable, bin_path, "--help"])
+        self.assertIn("usage: model_visualizer ", text)
 
-    # # TODO(#21023) This test is a bit too tricky in CI.
+    # TODO(#21023) This test is a bit too tricky in CI.
     # @unittest.skipIf(sys.platform == "darwin", "Skipped for tricky macOS CI")
-    # def test_drake_models_meshes(self):
-    #     """Ensures that the package://drake_models/... can be found by testing
-    #     a model that uses a meshfile from that location.
-    #     """
-    #     install_dir = install_test_helper.get_install_dir()
-    #     install_test_helper.check_call([
-    #         join(install_dir, "bin", "model_visualizer"),
-    #         "--loop_once",
-    #         "package://drake_models/"
-    #         "ycb/meshes/004_sugar_box_textured.obj"
-    #     ])
+    def test_drake_models_meshes(self):
+        """Ensures that the package://drake_models/... can be found by testing
+        a model that uses a meshfile from that location.
+        """
+        install_dir = install_test_helper.get_install_dir()
+        install_test_helper.check_call([
+            sys.executable,
+            join(install_dir, "bin", "model_visualizer"),
+            "--loop_once",
+            "package://drake_models/"
+            "ycb/meshes/004_sugar_box_textured.obj"
+        ])
 
 
 if __name__ == '__main__':

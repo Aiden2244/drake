@@ -115,6 +115,8 @@ def check_call(args, *extra_args, **kwargs):
     if args[0].endswith('.py'):
         # Ensure that we test with the same Python version that Bazel is using.
         args = [get_python_executable()] + args
+        print(f"DEBUG: in check_call")
+        print(f"DEBUG: args = {args}")
     if 'env' in kwargs:
         env = kwargs.pop('env')
     else:
@@ -136,6 +138,10 @@ def check_output(*args, **kwargs):
         env = os.environ
     print(f"DEBUG: in file install_test_helper.py")
     print(f"DEBUG: python interpreter before running subprocess = {sys.executable}")
+    
+    # print(f"DEBUG: environ = {env}")
+    print(f"DEBUG: arguments = {args}")
+    print(f"DEBUG: kewyord arguments = {kwargs}")
     return subprocess.check_output(
         cwd='/', env=env, *args, **kwargs).decode('utf8')
 
