@@ -154,6 +154,9 @@ drake_cc_googletest(
         ":osx": ["--gtest_filter=-*"],
         "//conditions:default": [],
     }),
+    env = {
+        "PNG_NO_WARNINGS": "1",
+    },
     data = [
         ":test/multi_material_mesh.png",
         ":test/whole_image_custom_color.png",
