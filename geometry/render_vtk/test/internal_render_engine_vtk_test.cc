@@ -848,6 +848,11 @@ TEST_F(RenderEngineVtkTest, NonUniformScaleTest) {
 // memory. We render the scene twice: once with the on-disk mesh and once with
 // the in-memory mesh to confirm they are rendered the same.
 TEST_F(RenderEngineVtkTest, InMemoryMesh) {
+  // Redirect stderr to suppress libpng warnings
+  FILE* original_stderr = stderr;
+  FILE* temp_file = tmpfile();
+  stderr = temp_file;
+
   // Pose the camera so we can see three sides of the cubes.
   const RotationMatrixd R_WR(math::RollPitchYawd(-0.75 * M_PI, 0, M_PI_4));
   const RigidTransformd X_WR(R_WR,
@@ -913,6 +918,9 @@ TEST_F(RenderEngineVtkTest, InMemoryMesh) {
                 {{"rainbow_box.mtl", MemoryFile::Make(mtl_path)},
                  {"rainbow_stripes.png", MemoryFile::Make(png_path)}}}));
   }
+  // Restore stderr
+  stderr = original_stderr;
+  fclose(temp_file);
 }
 
 // A simple regression test to make sure that we are supporting all of the
