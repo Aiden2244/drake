@@ -371,6 +371,37 @@ std::string SafeFilename(const std::string& description) {
   return filename;
 }
 
+// Filters stderr in selected test cases.
+//
+// libpng v1.6.47 introduced stricter handling for png image metadata chunks.
+// This caused certain tests to output unnecessary warnings pertaining to
+// invalid eXIf formatting in our sample images, interfering with the clarity
+// of our test results. This class redirects stderr in these tests to suppress
+// these warnings.
+class StderrRedirector {
+  public:
+   StderrRedirector() {
+     original_stderr_ = stderr;
+     temp_file_ = tmpfile();
+     if (temp_file_) {
+       stderr = temp_file_;
+     }
+   }
+   
+   ~StderrRedirector() {
+     if (original_stderr_) {
+       stderr = original_stderr_;
+     }
+     if (temp_file_) {
+       fclose(temp_file_);
+     }
+   }
+   
+  private:
+   FILE* original_stderr_ = nullptr;
+   FILE* temp_file_ = nullptr;
+ };
+
 // This test suite facilitates a test with a ground plane and floating shape.
 // The camera is positioned above the shape looking straight down. All
 // of the images produced from these tests should have the following properties:
@@ -848,10 +879,8 @@ TEST_F(RenderEngineVtkTest, NonUniformScaleTest) {
 // memory. We render the scene twice: once with the on-disk mesh and once with
 // the in-memory mesh to confirm they are rendered the same.
 TEST_F(RenderEngineVtkTest, InMemoryMesh) {
-  // Redirect stderr to suppress libpng warnings
-  FILE* original_stderr = stderr;
-  FILE* temp_file = tmpfile();
-  stderr = temp_file;
+  // Redirect stderr in this test to suppress libpng warnings
+  StderrRedirector filter;
 
   // Pose the camera so we can see three sides of the cubes.
   const RotationMatrixd R_WR(math::RollPitchYawd(-0.75 * M_PI, 0, M_PI_4));
@@ -918,9 +947,6 @@ TEST_F(RenderEngineVtkTest, InMemoryMesh) {
                 {{"rainbow_box.mtl", MemoryFile::Make(mtl_path)},
                  {"rainbow_stripes.png", MemoryFile::Make(png_path)}}}));
   }
-  // Restore stderr
-  stderr = original_stderr;
-  fclose(temp_file);
 }
 
 // A simple regression test to make sure that we are supporting all of the
@@ -932,6 +958,9 @@ TEST_F(RenderEngineVtkTest, InMemoryMesh) {
 // the image that is rendered by this test as the new reference (subject to
 // visual inspection).
 TEST_F(RenderEngineVtkTest, GltfTextureSupport) {
+  // Redirect stderr in this test to suppress libpng warnings
+  StderrRedirector filter;
+
   const RotationMatrixd R_WC(math::RollPitchYawd(-M_PI / 2.5, 0, M_PI / 4));
   const RigidTransformd X_WC(R_WC,
                              R_WC * Vector3d(0, 0, -6) + Vector3d(0, 0, -0.15));
@@ -977,6 +1006,9 @@ TEST_F(RenderEngineVtkTest, GltfTextureSupport) {
 // files (for that, see WholeImageCustomParams), just that it treats the glTF
 // asset formats uniformly.
 TEST_F(RenderEngineVtkTest, GltfAssetFormats) {
+  // Redirect stderr in this test to suppress libpng warnings
+  StderrRedirector filter;
+
   constexpr int kCount = 3;
   const std::array<std::string, kCount> filenames{
       FindResourceOrThrow("drake/geometry/render/test/meshes/cube1.gltf"),
@@ -2975,6 +3007,9 @@ TEST_F(RenderEngineVtkTest, WholeImageDefaultParams) {
 // Like WholeImageDefaultParams, except we use non-default render engine
 // parameters to detect differences.
 TEST_F(RenderEngineVtkTest, WholeImageCustomParams) {
+  // Redirect stderr in this test to suppress libpng warnings
+  StderrRedirector filter;
+
   // We need to determine the camera position up front, so we can transform
   // world-frame light definitions into the camera frame. We can determine the
   // extent of added shapes by omitting the render engine and getting the
@@ -3084,6 +3119,9 @@ TEST_F(RenderEngineVtkTest, WholeImageCustomParams) {
 // When we no longer require the render-to-square-window hack, we can nuke this
 // test.
 TEST_F(RenderEngineVtkTest, WholeImageVerticalAspectRatio) {
+  // Redirect stderr in this test to suppress libpng warnings
+  StderrRedirector filter;
+
   // From here we basically have the setup boilerplate. Differences are
   // explicitly called out.
 
