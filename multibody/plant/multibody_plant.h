@@ -1166,6 +1166,10 @@ class MultibodyPlant : public internal::MultibodyTreeSystem<T> {
   /// @throws std::exception if called before Finalize().
   const systems::InputPort<T>& get_applied_generalized_force_input_port() const;
 
+  // TODO(jwnimmer-tri) This input port should use BusValue instead of vector<>,
+  // so that the ExternallyAppliedSpatialForceMultiplexer hassle is unnecessary.
+  // Add the new port with a different name (maybe "applied_spatial_force_bus")
+  // and deprecate this port and that force mux for removal.
   /// Returns a constant reference to the input port for applying spatial
   /// forces to bodies in the plant. The data type for the port is an
   /// std::vector of ExternallyAppliedSpatialForce; any number of spatial forces
@@ -1798,7 +1802,8 @@ class MultibodyPlant : public internal::MultibodyTreeSystem<T> {
   /// Returns the total number of constraints specified by the user.
   int num_constraints() const {
     return num_coupler_constraints() + num_distance_constraints() +
-           num_ball_constraints() + num_weld_constraints();
+           num_ball_constraints() + num_weld_constraints() +
+           num_tendon_constraints();
   }
 
   /// Returns a list of all constraint identifiers. The returned vector becomes
@@ -1820,6 +1825,12 @@ class MultibodyPlant : public internal::MultibodyTreeSystem<T> {
 
   /// Returns the total number of weld constraints specified by the user.
   int num_weld_constraints() const { return ssize(weld_constraints_specs_); }
+
+  /// Returns the total number of tendon constraints specified by the
+  /// user.
+  int num_tendon_constraints() const {
+    return ssize(tendon_constraints_specs_);
+  }
 
   /// (Internal use only) Returns the coupler constraint specification
   /// corresponding to `id`
@@ -1857,6 +1868,15 @@ class MultibodyPlant : public internal::MultibodyTreeSystem<T> {
     return weld_constraints_specs_.at(id);
   }
 
+  /// (Internal use only)  Returns the tendon constraint specification
+  /// corresponding to `id`
+  /// @throws if `id` is not a valid identifier for a tendon constraint.
+  const internal::TendonConstraintSpec& get_tendon_constraint_specs(
+      MultibodyConstraintId id) const {
+    DRAKE_THROW_UNLESS(tendon_constraints_specs_.contains(id));
+    return tendon_constraints_specs_.at(id);
+  }
+
   /// (Internal use only)  Returns a reference to the all of the coupler
   /// constraints in this plant as a map from MultibodyConstraintId to
   /// CouplerConstraintSpec.
@@ -1885,6 +1905,14 @@ class MultibodyPlant : public internal::MultibodyTreeSystem<T> {
   const std::map<MultibodyConstraintId, internal::WeldConstraintSpec>&
   get_weld_constraint_specs() const {
     return weld_constraints_specs_;
+  }
+
+  /// (Internal use only) Returns a reference to the all of the tendon
+  /// constraints in this plant as a map from MultibodyConstraintId to
+  /// TendonConstraintSpec.
+  const std::map<MultibodyConstraintId, internal::TendonConstraintSpec>&
+  get_tendon_constraint_specs() const {
+    return tendon_constraints_specs_;
   }
 
   /// Returns the active status of the constraint given by `id` in `context`.
@@ -2026,6 +2054,94 @@ class MultibodyPlant : public internal::MultibodyTreeSystem<T> {
   MultibodyConstraintId AddWeldConstraint(
       const RigidBody<T>& body_A, const math::RigidTransform<double>& X_AP,
       const RigidBody<T>& body_B, const math::RigidTransform<double>& X_BQ);
+
+  /// Defines a set of unilateral constraints on the length of an abstract
+  /// tendon defined as:
+  ///
+  ///   l(q) = aᵀ⋅q + offset ∈ ℝ
+  ///
+  /// where **q** is the configuration of the model, **a** is a vector of
+  /// coefficients, and **offset** a scalar offset. This constraint imposes:
+  ///
+  ///   lₗ ≤ l(q) ≤ lᵤ
+  ///
+  /// where **lₗ** and **lᵤ** are lower and upper bounds, respectively. Both
+  /// limits are not strictly required. At most one of **lₗ** or **lᵤ** may be
+  /// infinite (−∞ for **lₗ** and ∞ for **lᵤ**), indicating no lower or upper
+  /// limit, respectively.
+  ///
+  /// For finite `stiffness` and `damping`, this constraint is modeled by
+  /// compliant spring-like forces:
+  ///
+  ///  fₗ = −stiffness⋅(l - lₗ) − damping⋅dl(q)/dt \n
+  ///  fᵤ = −stiffness⋅(lᵤ - l) + damping⋅dl(q)/dt
+  ///
+  /// that act to keep the length within bounds. If the user provided stiffness
+  /// is either omitted or set to ∞, this constraint is modeled as close to
+  /// rigid as possible by the underlying solver.
+  ///
+  /// @note The coefficients in a are expected to have units such that the
+  /// abstract length l(q) has consistent units (either meters or radians) and
+  /// it is up to the user to maintain consistency in these units. The
+  /// (optionally user provided) `stiffness` and `damping` are expected to have
+  /// consistent units such that their products have units of the corresponding
+  /// generalized force. E.g. N/m for `stiffness` and N⋅s/m for `damping` when l
+  /// has units of m, so that **fₗ** and **fᵤ** have units of N.
+  ///
+  /// @note Any joint involved in this constraint can still be actuated.
+  ///
+  /// @note See the MuJoCo model documentation for details the equivalent
+  /// concept of a "fixed" tendon:
+  /// https://mujoco.readthedocs.io/en/stable/XMLreference.html#tendon-fixed
+  ///
+  /// @param[in] joints Non-empty vector of single-dof joint indices where the
+  /// configuration, qᵢ, of joints[i] corresponds to the entry a[i].
+  /// @param[in] a Non-empty vector of coefficients where a[i]
+  /// corresponds to the configuration, qᵢ, of joints[i].
+  /// @param[in] offset (optional) Scalar length offset in either [m] or [rad].
+  /// If std::nullopt, it is set to 0.
+  /// @param[in] lower_limit (optional) Lower bound on l in either [m] or [rad].
+  /// If std::nullopt, it is set to −∞.
+  /// @param[in] upper_limit Upper bound on l in either [m] or [rad]. If
+  /// std::nullopt, it is set to ∞.
+  /// @param[in] stiffness (optional) Constraint stiffness in either [N/m] or
+  /// [N⋅m/rad]. If std::nullopt, its default value is set to ∞ to model a rigid
+  /// constraint.
+  /// @param[in] damping (optional) Constraint damping in either [N⋅s/m] or
+  /// [N⋅m⋅rad/s]. If std::nullopt, it is set to 0 to model a non-dissipative
+  /// constraint.
+  ///
+  /// @warning Because of a restriction in the SAP solver, **at most** two
+  /// kinematic trees can be represented by the joints in `joints`. This
+  /// violation is only detected after the simulation has been started, in which
+  /// case the solver will throw an exception when trying to add the constraint.
+  ///
+  /// @pre `joints.size() > 0`
+  /// @pre `joints` contains no duplicates.
+  /// @pre `a.size() == joints.size()`
+  /// @pre `index ∈ joints` is a valid (non-removed) index to a joint in this
+  /// plant.
+  /// @pre `get_joint(index).%num_velocities() == 1` for each index in `joints`.
+  /// @pre `lower_limit < ∞` (if not std::nullopt).
+  /// @pre `upper_limit > -∞` (if not std::nullopt).
+  /// @pre At least one of `lower_limit` and `upper_limit` are finite.
+  /// @pre `lower_limit ≤ upper_limit` (if not std::nullopt).
+  /// @pre `stiffness > 0` (if not std::nullopt).
+  /// @pre `damping >= 0` (if not std::nullopt).
+  ///
+  /// @throws std::exception if the %MultibodyPlant has already been finalized.
+  /// @throws std::exception if `this` %MultibodyPlant is not a discrete model
+  /// (`is_discrete() == false`).
+  /// @throws std::exception if `this` %MultibodyPlant's underlying contact
+  /// solver is not SAP. (i.e. `get_discrete_contact_solver() !=
+  /// DiscreteContactSolver::kSap`).
+  MultibodyConstraintId AddTendonConstraint(std::vector<JointIndex> joints,
+                                            std::vector<double> a,
+                                            std::optional<double> offset,
+                                            std::optional<double> lower_limit,
+                                            std::optional<double> upper_limit,
+                                            std::optional<double> stiffness,
+                                            std::optional<double> damping);
 
   /// Removes the constraint `id` from the plant. Note that this will _not_
   /// remove constraints registered directly with DeformableModel.
@@ -6254,6 +6370,10 @@ class MultibodyPlant : public internal::MultibodyTreeSystem<T> {
   // Map of weld constraint specifications.
   std::map<MultibodyConstraintId, internal::WeldConstraintSpec>
       weld_constraints_specs_;
+
+  // Map of tendon constraint specifications.
+  std::map<MultibodyConstraintId, internal::TendonConstraintSpec>
+      tendon_constraints_specs_;
 
   // Whether to apply collsion filters to adjacent bodies at Finalize().
   bool adjacent_bodies_collision_filters_{
