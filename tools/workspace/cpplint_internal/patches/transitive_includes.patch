@@ -14,7 +14,8 @@ Drake cpplint tests prior to targeting the upstream. Thus, reinstating this
 behavior allows us to move away from Drake's legacy target without any loss in
 existing functionality.
 
-TODO: implement a more comprehensive linting strategy for transitive includes.
+TODO: implement a more comprehensive linting strategy for transitive
+includes.
 
 Reason for not upstreaming this patch: compliance with Drake-specific
 convention which technically goes against upstream cpplint.
