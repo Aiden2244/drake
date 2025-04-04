@@ -11,6 +11,9 @@ general "whitespace/newline" category. The "made-up" name is then
 added to the "_DEFAULT_FILTERS" list, effectively suppressing the
 error violations in these specific cases.
 
+Reason for not upstreaming this patch: patch intended for Drake-specific
+error suppression.
+
 --- cpplint.py
 +++ cpplint.py
 @@ -356,6 +356,7 @@ _ERROR_CATEGORIES = [
