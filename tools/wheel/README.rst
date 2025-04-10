@@ -139,5 +139,7 @@ installation while building the wheel. Therefore, this path must be available.
 
 After performing wheel-specific provisioning using ``brew``, the builder
 invokes ``macos/build-wheel.sh``, optionally (and if the build succeeded)
-followed by ``macos/test-wheel.sh``. These scripts approximately replicate what
-would happen in Docker, and heavily reuse the same lower level scripts.
+followed by a series of test scripts (``macos/provision-test-python.sh``,
+``test/install-wheel.sh``, and ``test/test-wheel.sh`` in that order. These
+scripts approximately replicate what would happen in Docker, and heavily reuse
+the same lower level scripts.
