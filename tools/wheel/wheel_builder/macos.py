@@ -38,6 +38,25 @@ def _cleanup():
             gripe(f'Warning: failed to remove \'{f}\'?')
 
 
+def _reset_environment():
+    """
+    Prophetically removes all temporary directories used in the wheel building
+    process.
+    """
+    paths = [
+        '/opt/drake-wheel-build',
+        '/opt/drake-dist'
+        '/opt/drake-wheel-test',
+        '/opt/drake',
+    ]
+
+    for path in paths:
+        try:
+            shutil.rmtree(path)
+        except FileNotFoundError:
+            die(f'Error: failed to remove {path}')
+
+
 def _find_wheel(path, version, python_target):
     """
     Returns name of built wheel. Uses `glob` to find it, since trying to
