@@ -26,7 +26,7 @@ _files_to_remove = []
 # listed in `setup/macos/source_distribution/Brewfile-developer`.
 python_targets = (
     PythonTarget(3, 12),
-    PythonTarget(3, 13),
+    PythonTarget(3, 13)
 )
 
 
