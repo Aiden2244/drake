@@ -11,6 +11,7 @@ import subprocess
 from .common import create_snopt_tgz, die, gripe, wheel_name
 from .common import build_root, resource_root, wheel_root, wheelhouse
 from .common import test_root, find_tests
+from .common import drake_install_root
 
 from .macos_types import PythonTarget
 
@@ -20,6 +21,9 @@ _files_to_remove = []
 # This is the complete set of defined targets (i.e. potential wheels). By
 # default, all targets are built, but the user may down-select from this set.
 # On macOS (unlike Linux), this is just the set of Python versions targeted.
+#
+# Note that these python versions must manually be kept in sync with those
+# listed in `setup/macos/source_distribution/Brewfile-developer`.
 python_targets = (
     PythonTarget(3, 12),
     PythonTarget(3, 13),
@@ -31,30 +35,13 @@ def _cleanup():
     """
     Removes temporary artifacts on exit.
     """
+    print('[-] Removing temporary files', flush=True)
     for f in _files_to_remove:
+        print(f'\tRemoving file: {f}', flush=True)
         try:
             os.unlink(f)
         except FileNotFoundError:
             gripe(f'Warning: failed to remove \'{f}\'?')
-
-
-def _reset_environment():
-    """
-    Prophetically removes all temporary directories used in the wheel building
-    process.
-    """
-    paths = [
-        '/opt/drake-wheel-build',
-        '/opt/drake-dist'
-        '/opt/drake-wheel-test',
-        '/opt/drake',
-    ]
-
-    for path in paths:
-        try:
-            shutil.rmtree(path)
-        except FileNotFoundError:
-            die(f'Error: failed to remove {path}')
 
 
 def _find_wheel(path, version, python_target):
@@ -131,8 +118,9 @@ def build(options):
         die('Nothing to do! (Python version selection '
             'resulted in an empty set of wheels)')
 
-    # Set up build environment.
-    os.makedirs(build_root, exist_ok=True)
+    # Reset and set up build environment.
+    delete_wheel_directories()
+    os.makedirs(build_root, exist_ok=False)
 
     # Sanitize the build/test environment.
     environment = os.environ.copy()
@@ -193,10 +181,7 @@ def build(options):
         os.unlink(wheel_root)
 
     if not options.keep_build:
-        shutil.rmtree('/opt/drake-dist')
-        shutil.rmtree(build_root)
-        if options.test:
-            shutil.rmtree(test_root)
+        delete_wheel_directories()
 
 
 def add_build_arguments(parser):
@@ -226,3 +211,29 @@ def fixup_options(options):
     (Converts comma-separated strings to sets.)
     """
     options.python_versions = set(options.python_versions.split(','))
+
+
+def delete_wheel_directories():
+    """
+    Prophetically removes all temporary directories used in the wheel building
+    process.
+    """
+    # It not sufficient to rely on the atexit handler to invoke this logic,
+    # so we will run it manually here as well.
+    _cleanup()
+
+    drake_wheel_directories = [
+        '/opt/drake',
+        build_root,
+        test_root,
+        drake_install_root
+    ]
+
+    print('[-] Removing wheel builder targets', flush=True)
+    for dir in drake_wheel_directories:
+        if os.path.islink(dir):
+            print(f'\tRemoving symlink {dir}', flush=True)
+            os.unlink(dir)
+        if os.path.isdir(dir):
+            print(f'\tRemoving directory {dir}', flush=True)
+            shutil.rmtree(dir)
