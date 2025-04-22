@@ -163,7 +163,7 @@ if [[ "${codename}" == "noble" ]]; then
     status_stdcxx=$(dpkg-query --show --showformat='${db:Status-Abbrev}' libstdc++-14-dev 2>/dev/null || true)
     status_fortran=$(dpkg-query --show --showformat='${db:Status-Abbrev}' libgfortran-14-dev 2>/dev/null || true)
     if [[ "${status_stdcxx}" != "ii " || "${status_fortran}" != "ii " ]]; then
-      apt-get install ${maybe_yes} --no-install-recommends libgcc-14-dev libstdc++-14-dev libgfortran-14-dev
+      apt-get install ${maybe_yes} --no-install-recommends libgcc-14-dev libstdc++-14-dev libgfortran-14-dev libclang-17-dev
     fi
   fi
 fi
