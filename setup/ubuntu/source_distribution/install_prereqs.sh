@@ -157,7 +157,7 @@ fi
 # them correctly as a group, Drake's documentation header file parser will fail
 # with a libclang-related complaint. Therefore, we'll help the user clean up
 # their mess, to avoid apparent Drake build errors.
-if [ "${codename}" == "noble" ]]; then
+if [[ "${codename}" == "noble" ]]; then
   status=$(dpkg-query --show --showformat='${db:Status-Abbrev}' libgcc-14-dev 2>/dev/null || true)
   if [[ "${status}" == "ii " ]]; then
     status_stdcxx=$(dpkg-query --show --showformat='${db:Status-Abbrev}' libstdc++-14-dev 2>/dev/null || true)
