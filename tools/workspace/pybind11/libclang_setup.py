@@ -38,7 +38,7 @@ def add_library_paths(parameters=None):
                 parameters += ['-isysroot', sdkroot]
     elif platform.system() == 'Linux':
         # We expect Clang 15 to be installed.
-        version = 17
+        version = 15
         arch = platform.machine()
         llvm_root = f'/usr/lib64/llvm{version}'
         if os.path.exists(llvm_root):
