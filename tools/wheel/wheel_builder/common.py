@@ -22,6 +22,9 @@ build_root = f'{home_path}/.cache/drake-wheel-build'
 # Location where testing of the wheel will take place.
 test_root = f'{home_path}/.cache/drake-wheel-test'
 
+# Location where the distribution of drake used for install lives.
+dist_root = f'{home_path}/.cache/drake-dist'
+
 # Location where the wheel will be produced.
 wheel_root = os.path.join(build_root, 'wheel')
 wheelhouse = os.path.join(wheel_root, 'wheelhouse')
