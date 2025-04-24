@@ -180,7 +180,7 @@ def build(options):
         os.unlink(wheel_root)
 
     if not options.keep_build:
-        shutil.rmtree('/opt/drake-dist')
+        shutil.rmtree('/tmp/drake-dist')
         shutil.rmtree(build_root)
         if options.test:
             shutil.rmtree(test_root)
