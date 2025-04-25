@@ -5,15 +5,17 @@
 
 set -eu -o pipefail
 
-mkdir ${HOME}/.cache/drake-wheel-build/drake-build
-cd ${HOME}/.cache/drake-wheel-build/drake-build
+[ -d /tmp/drake-wheel/build/ ]
+
+mkdir /tmp/drake-wheel-build/drake-build
+cd /tmp/drake-wheel-build/drake-build
 
 # Store downloads in the build cache to speed up rebuilds.
 export BAZELISK_HOME=/var/cache/bazel/bazelisk
 
 # Add wheel-specific bazel options.
 # N.B. When you change anything here, also fix wheel/macos/build-wheel.sh.
-cat > ${HOME}/.cache/drake-wheel-build/drake-build/drake.bazelrc << EOF
+cat > /tmp/drake-wheel-build/drake-build/drake.bazelrc << EOF
 build --disk_cache=/var/cache/bazel/disk_cache
 build --repository_cache=/var/cache/bazel/repository_cache
 build --repo_env=DRAKE_WHEEL=1
@@ -39,6 +41,6 @@ cmake ../drake \
     -DWITH_USER_ZLIB=OFF \
     -DDRAKE_VERSION_OVERRIDE="${DRAKE_VERSION}" \
     -DDRAKE_GIT_SHA_OVERRIDE="${DRAKE_GIT_SHA}" \
-    -DCMAKE_INSTALL_PREFIX="${HOME}"/.cache/drake \
+    -DCMAKE_INSTALL_PREFIX=/tmp/drake-wheel-build/drake-dist \
     -DPython_EXECUTABLE=/usr/local/bin/python
 make install
