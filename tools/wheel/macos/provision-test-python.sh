@@ -12,11 +12,11 @@ if [[ $# -lt 1 ]]; then
 fi
 
 # Clean up from old tests.
-rm -rf ${HOME}/.cache/drake-wheel-test
+rm -rf /tmp/drake-wheel-test
 
 # Prepare test environment.
-mkdir ${HOME}/.cache/drake-wheel-test
+mkdir /tmp/drake-wheel-test
 
 # NOTE: Xcode ships python3, make sure to use the one from brew.
 $(brew --prefix python@$1)/bin/python$1 \
-    -m venv ${HOME}/.cache/drake-wheel-test/python$1
+    -m venv /tmp/drake-wheel-test/python$1

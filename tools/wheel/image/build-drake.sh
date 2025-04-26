@@ -5,9 +5,7 @@
 
 set -eu -o pipefail
 
-mkdir ${HOME}/.cache/drake-wheel-build/drake-build
-cd ${HOME}/.cache/drake-wheel-build/drake-build
-[ -d /tmp/drake-wheel/build/ ]
+[ -d /tmp/drake-wheel-build/ ]
 
 mkdir /tmp/drake-wheel-build/drake-build
 cd /tmp/drake-wheel-build/drake-build
@@ -17,7 +15,6 @@ export BAZELISK_HOME=/var/cache/bazel/bazelisk
 
 # Add wheel-specific bazel options.
 # N.B. When you change anything here, also fix wheel/macos/build-wheel.sh.
-cat > ${HOME}/.cache/drake-wheel-build/drake-build/drake.bazelrc << EOF
 cat > /tmp/drake-wheel-build/drake-build/drake.bazelrc << EOF
 build --disk_cache=/var/cache/bazel/disk_cache
 build --repository_cache=/var/cache/bazel/repository_cache
@@ -33,9 +30,14 @@ build --define=LCM_INSTALL_JAVA=OFF
 build --java_runtime_version=remotejdk_11
 EOF
 
+# Add before cmake command
+echo "Testing Python interpreter..."
+ls -la /tmp/drake-wheel-build/python-dist/bin/python
+/tmp/drake-wheel-build/python-dist/bin/python --version || echo "Python failed to execute"
+
 # Install Drake using our wheel-build-specific Python interpreter.
 # N.B. When you change anything here, also fix wheel/macos/build-wheel.sh.
-cmake ../drake \
+cmake ../drake-src \
     -DWITH_USER_EIGEN=OFF \
     -DWITH_USER_FMT=OFF \
     -DWITH_USER_SPDLOG=OFF \
@@ -44,8 +46,6 @@ cmake ../drake \
     -DWITH_USER_ZLIB=OFF \
     -DDRAKE_VERSION_OVERRIDE="${DRAKE_VERSION}" \
     -DDRAKE_GIT_SHA_OVERRIDE="${DRAKE_GIT_SHA}" \
-    -DCMAKE_INSTALL_PREFIX="${HOME}"/.cache/drake \
-    -DPython_EXECUTABLE=/usr/local/bin/python
     -DCMAKE_INSTALL_PREFIX=/tmp/drake-wheel-build/drake-dist \
     -DPython_EXECUTABLE=/tmp/drake-wheel-build/python-dist/bin/python
 make install

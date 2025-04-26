@@ -68,7 +68,7 @@ debugging purposes and should not be needed in ordinary use.
     system. (The Docker cache and tagged images may still be altered.)
 
     On macOS, if ``--keep-build`` is used, the wheel will still be accessible
-    via its build location in ``/${HOME}/.cache/drake-wheel-build/wheel/wheelhouse``.
+    via its build location in ``//tmp/drake-wheel-build/wheel/wheelhouse``.
 
     This option automatically implies ``--no-test``.
 
@@ -126,17 +126,17 @@ was successfully installed.
 On macOS, wheels must be built on the host system. The following directories
 are used:
 
-- ``${HOME}/.cache/drake-wheel-build``:
+- ``/tmp/drake-wheel-build``:
   Contains most intermediate artifacts.
 
-- ``${HOME}/.cache/drake-dist``:
+- ``/tmp/drake-dist``:
   Contains the Drake installation used to build the wheel.
 
-- ``${HOME}/.cache/drake-wheel-test``:
+- ``/tmp/drake-wheel-test``:
   Contains a Python virtual environment used to test the wheel.
 
 In addition, the wheel creation script requires that the Drake installation is
-located at ``${HOME}/.cache/drake``. Since multiple builds may be present, a temporary
+located at ``/tmp/drake``. Since multiple builds may be present, a temporary
 symlink is created at this path to the actual, Python-version-specific
 installation while building the wheel. Therefore, this path must be available.
 
