@@ -12,6 +12,14 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import platform
+
+# Resolve the home directory path.
+if platform.system() == 'Linux':
+    # Linux always builds in Docker containers so home path is deterministic
+    home_path = '/root'
+else:
+    home_path = os.getenv('HOME')
 
 # Resolve the home directory path.
 home_path = os.getenv('HOME')
