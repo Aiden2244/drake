@@ -11,7 +11,6 @@ set -eu -o pipefail
 # (needed to download the sources). Otherwise, the version should be a valid
 # suffix of 'python'. Unspecified is treated as '3'.
 if [[ "${1%:*}" == "build" ]]; then
-    readonly PREFIX=${HOME}/.cache/drake-python
     readonly PREFIX=/tmp/drake-wheel-build/python-dist
     readonly PYTHON=python$(echo ${1#*:} | cut -d. -f1-2)
 

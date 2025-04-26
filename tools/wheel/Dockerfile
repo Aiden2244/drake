@@ -34,8 +34,6 @@ RUN /image/provision-python.sh ${PYTHON} ${PYTHON_SHA}
 # -----------------------------------------------------------------------------
 
 ADD image/build-drake.sh /image/
-ADD image/drake-src.tar /root/.cache/drake-wheel-build/drake/
-COPY image/snopt.tar.gz /root/.cache/drake-wheel-build/src/
 ADD image/drake-src.tar /tmp/drake-wheel-build/drake-src/
 COPY image/snopt.tar.gz /tmp/drake-wheel-build/snopt/
 
@@ -45,21 +43,19 @@ COPY image/snopt.tar.gz /tmp/drake-wheel-build/snopt/
 
 FROM clean AS wheel
 
+COPY --from=clean /tmp/drake-wheel-build/python-dist /tmp/drake-wheel-build/python-dist
+
 ARG DRAKE_VERSION
 ARG DRAKE_GIT_SHA
 
 ENV DRAKE_VERSION=${DRAKE_VERSION}
 ENV DRAKE_GIT_SHA=${DRAKE_GIT_SHA}
-ENV SNOPT_PATH=/root/.cache/drake-wheel-build/src/snopt.tar.gz
 ENV SNOPT_PATH=/tmp/drake-wheel-build/snopt/snopt.tar.gz
 
 RUN --mount=type=cache,target=/var/cache/bazel \
     /image/build-drake.sh
 
 ADD image/build-wheel.sh /image/
-ADD image/setup.py /root/.cache/drake-wheel-build/wheel/
-ADD content /root/.cache/drake-wheel-content
-ADD licenses /root/.cache/drake-wheel-licenses
 ADD image/setup.py /tmp/drake-wheel-build/drake-wheel/
 ADD content /tmp/drake-wheel-build/drake-wheel-content
 ADD licenses /tmp/drake-wheel-build/drake-wheel-licenses

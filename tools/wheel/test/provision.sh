@@ -15,8 +15,8 @@ apt-get -y install --no-install-recommends \
     python3-venv \
     libx11-6 libsm6 libxt6 libglib2.0-0
 
-${PYTHON} -m venv ${HOME}/.cache/drake-wheel-test/python
+${PYTHON} -m venv /tmp/drake-wheel-test/python
 
-. ${HOME}/.cache/drake-wheel-test/python/bin/activate
+. /tmp/drake-wheel-test/python/bin/activate
 
 pip install --upgrade pip
