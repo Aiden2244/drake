@@ -71,7 +71,7 @@ cmake "$git_root" \
     -DWITH_USER_LAPACK=OFF \
     -DWITH_USER_ZLIB=OFF \
     -DDRAKE_VERSION_OVERRIDE="${DRAKE_VERSION}" \
-    -DCMAKE_INSTALL_PREFIX="/tmp/drake-dist/$python"
+    -DCMAKE_INSTALL_PREFIX="/tmp/drake-dist/$python" \
     -DPython_EXECUTABLE="$python_executable"
 make install
 
