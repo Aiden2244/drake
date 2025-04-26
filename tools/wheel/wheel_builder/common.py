@@ -12,23 +12,15 @@ import shutil
 import subprocess
 import sys
 import tarfile
-import platform
-
-# Resolve the home directory path.
-if platform.system() == 'Linux':
-    # Linux always builds in Docker containers so home path is deterministic
-    home_path = '/root'
-else:
-    home_path = os.getenv('HOME')
 
 # Location where most of the build will take place.
-build_root = f'{home_path}/.cache/drake-wheel-build'
+build_root = '/tmp/drake-wheel-build'
 
 # Location where testing of the wheel will take place.
-test_root = f'{home_path}/.cache/drake-wheel-test'
+test_root = '/tmp/drake-wheel-test'
 
 # Location where the distribution of drake used for install lives.
-dist_root = f'{home_path}/.cache/drake-dist'
+dist_root = '/tmp/drake-dist'
 
 # Location where the wheel will be produced.
 wheel_root = os.path.join(build_root, 'wheel')
