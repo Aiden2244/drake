@@ -50,7 +50,7 @@ copy_license()
 
 # Activate Drake's virtual environment, which provides some of the tools that
 # we need to build the wheels.
-. /tmp/drake-wheel-build/drake/venv/bin/activate
+. /tmp/drake-wheel-build/drake-src/venv/bin/activate
 
 readonly WHEEL_DIR=/tmp/drake-wheel-build/wheel
 readonly WHEEL_SHARE_DIR=${WHEEL_DIR}/pydrake/share
