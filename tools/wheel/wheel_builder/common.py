@@ -20,7 +20,7 @@ build_root = '/tmp/drake-wheel-build'
 test_root = '/tmp/drake-wheel-test'
 
 # Location where the wheel will be produced.
-wheel_root = os.path.join(build_root, 'wheel')
+wheel_root = os.path.join(build_root, 'drake-wheel')
 wheelhouse = os.path.join(wheel_root, 'wheelhouse')
 
 # Location of various scripts and other artifacts used to complete the build.
