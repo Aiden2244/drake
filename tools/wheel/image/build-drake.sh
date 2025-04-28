@@ -30,11 +30,6 @@ build --define=LCM_INSTALL_JAVA=OFF
 build --java_runtime_version=remotejdk_11
 EOF
 
-# Add before cmake command
-echo "Testing Python interpreter..."
-ls -la /tmp/drake-wheel-build/python-dist/bin/python
-/tmp/drake-wheel-build/python-dist/bin/python --version || echo "Python failed to execute"
-
 # Install Drake using our wheel-build-specific Python interpreter.
 # N.B. When you change anything here, also fix wheel/macos/build-wheel.sh.
 cmake ../drake-src \

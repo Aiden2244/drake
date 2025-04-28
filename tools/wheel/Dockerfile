@@ -43,8 +43,6 @@ COPY image/snopt.tar.gz /tmp/drake-wheel-build/snopt/
 
 FROM clean AS wheel
 
-COPY --from=clean /tmp/drake-wheel-build/python-dist /tmp/drake-wheel-build/python-dist
-
 ARG DRAKE_VERSION
 ARG DRAKE_GIT_SHA
 
