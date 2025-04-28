@@ -42,5 +42,5 @@ cmake ../drake-src \
     -DDRAKE_VERSION_OVERRIDE="${DRAKE_VERSION}" \
     -DDRAKE_GIT_SHA_OVERRIDE="${DRAKE_GIT_SHA}" \
     -DCMAKE_INSTALL_PREFIX=/tmp/drake-wheel-build/drake-dist \
-    -DPython_EXECUTABLE=/tmp/drake-wheel-build/python-dist/bin/python
+    -DPython_EXECUTABLE=/usr/local/bin/python
 make install
