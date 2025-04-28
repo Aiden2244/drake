@@ -62,20 +62,20 @@ mkdir -p ${WHEEL_DIR}/pydrake/share/drake
 cd ${WHEEL_DIR}
 
 cp -r -t ${WHEEL_DIR}/drake \
-    /tmp/drake-dist/lib/python*/site-packages/drake/*
+    /tmp/drake-wheel-build/drake-dist/lib/python*/site-packages/drake/*
 
 cp -r -t ${WHEEL_DIR}/pydrake \
-    /tmp/drake-dist/share/doc \
-    /tmp/drake-dist/lib/python*/site-packages/pydrake/*
+    /tmp/drake-wheel-build/drake-dist/share/doc \
+    /tmp/drake-wheel-build/drake-dist/lib/python*/site-packages/pydrake/*
 
 cp -r -t ${WHEEL_DIR}/pydrake/lib \
-    /tmp/drake-dist/lib/libdrake*.so
+    /tmp/drake-wheel-build/drake-dist/lib/libdrake*.so
 
 # MOSEK is "sort of" third party, but is procured as part of Drake's build and
 # ends up in /tmp/drake. It should end up in the same place as libdrake.so.
 cp -r -t ${WHEEL_DIR}/pydrake/lib \
-    /tmp/drake-dist/lib/libmosek* \
-    /tmp/drake-dist/lib/libtbb*
+    /tmp/drake-wheel-build/drake-dist/lib/libmosek* \
+    /tmp/drake-wheel-build/drake-dist/lib/libtbb*
 
 if [[ "$(uname)" == "Linux" ]]; then
   cp -r -t ${WHEEL_DIR}/pydrake \
@@ -91,17 +91,17 @@ if [[ "$(uname)" == "Linux" ]]; then
 fi
 
 cp -r -t ${WHEEL_SHARE_DIR}/drake \
-    /tmp/drake-dist/share/drake/.drake-find_resource-sentinel \
-    /tmp/drake-dist/share/drake/package.xml \
-    /tmp/drake-dist/share/drake/examples \
-    /tmp/drake-dist/share/drake/geometry \
-    /tmp/drake-dist/share/drake/multibody \
-    /tmp/drake-dist/share/drake/tutorials
+    /tmp/drake-wheel-build/drake-dist/share/drake/.drake-find_resource-sentinel \
+    /tmp/drake-wheel-build/drake-dist/share/drake/package.xml \
+    /tmp/drake-wheel-build/drake-dist/share/drake/examples \
+    /tmp/drake-wheel-build/drake-dist/share/drake/geometry \
+    /tmp/drake-wheel-build/drake-dist/share/drake/multibody \
+    /tmp/drake-wheel-build/drake-dist/share/drake/tutorials
 
 if [[ "$(uname)" == "Linux" ]]; then
     mkdir -p ${WHEEL_SHARE_DIR}/drake/setup
     cp -r -t ${WHEEL_SHARE_DIR}/drake/setup \
-        /tmp/drake-dist/share/drake/setup/deepnote
+        /tmp/drake-wheel-build/drake-dist/share/drake/setup/deepnote
 fi
 
 if [[ "$(uname)" == "Linux" ]]; then
