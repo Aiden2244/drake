@@ -27,23 +27,11 @@ readonly python_prefix="$(brew --prefix python@$python_version)"
 readonly python_executable="$python_prefix/bin/$python"
 
 # -----------------------------------------------------------------------------
-# Clean up from old builds.
-# -----------------------------------------------------------------------------
-
-rm -rf "/tmp/drake-wheel-build/$python"
-rm -rf "/tmp/drake-dist/$python"
-
-if [ -e "/tmp/drake" ]; then
-    echo "Unable to proceed: /tmp/drake exists" \
-         "(left over from a failed build?)" >&2
-    exit 1
-fi
-
-# -----------------------------------------------------------------------------
 # Build and "install" Drake.
 # -----------------------------------------------------------------------------
+"$resource_root/image/provision-build.sh" "$python-"
 
-readonly build_root="/tmp/drake-wheel-build/$python/drake-build"
+readonly build_root="/tmp/drake-wheel-build/drake-build"
 
 mkdir -p "$build_root"
 cd "$build_root"
@@ -71,7 +59,7 @@ cmake "$git_root" \
     -DWITH_USER_LAPACK=OFF \
     -DWITH_USER_ZLIB=OFF \
     -DDRAKE_VERSION_OVERRIDE="${DRAKE_VERSION}" \
-    -DCMAKE_INSTALL_PREFIX="/tmp/drake-dist/$python" \
+    -DCMAKE_INSTALL_PREFIX="/tmp/drake-wheel-build/drake-dist" \
     -DPython_EXECUTABLE="$python_executable"
 make install
 
@@ -91,9 +79,9 @@ find "$build_root" -type d -print0 | xargs -0 chmod u+w
 # "Install" additional tools to build the wheel.
 # -----------------------------------------------------------------------------
 
-ln -nsf "$git_root" "/tmp/drake-wheel-build/drake"
+ln -nsf "$git_root" "/tmp/drake-wheel-build/drake-src"
 
-readonly venv_drake="/tmp/drake-wheel-build/drake/venv"
+readonly venv_drake="/tmp/drake-wheel-build/drake-src/venv"
 
 ln -s \
     "$build_root/bazel-bin/external/drake+/tools/wheel/strip_rpath" \
@@ -107,17 +95,12 @@ ln -s \
 # Build the Drake wheel.
 # -----------------------------------------------------------------------------
 
-mkdir -p "/tmp/drake-wheel-build/$python/wheel"
-
-ln -s "/tmp/drake-dist/$python" \
-      "/tmp/drake"
+mkdir -p "/tmp/drake-wheel-build/drake-wheel"
 
 cp \
     "$resource_root/image/setup.py" \
-    "/tmp/drake-wheel-build/wheel/setup.py"
+    "/tmp/drake-wheel-build/drake-wheel/setup.py"
 
 export DRAKE_VERSION="$1"
 
 "$resource_root/image/build-wheel.sh"
-
-rm "/tmp/drake"

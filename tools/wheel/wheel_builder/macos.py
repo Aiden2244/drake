@@ -11,7 +11,6 @@ import subprocess
 from .common import create_snopt_tgz, die, gripe, wheel_name
 from .common import build_root, resource_root, wheel_root, wheelhouse
 from .common import test_root, find_tests
-from .common import dist_root
 
 from .macos_types import PythonTarget
 
@@ -148,7 +147,7 @@ def build(options):
     environment['DRAKE_VERSION'] = options.version
 
     # Create the snopt source archive (and pass along as an environment var).
-    snopt_tgz = os.path.join(resource_root, 'image', 'snopt.tar.gz')
+    snopt_tgz = os.path.join(build_root, 'snopt', 'snopt.tar.gz')
     environment['SNOPT_PATH'] = snopt_tgz
     _files_to_remove.append(snopt_tgz)
     create_snopt_tgz(snopt_path=options.snopt_path, output=snopt_tgz)
@@ -182,7 +181,6 @@ def build(options):
         os.unlink(wheel_root)
 
     if not options.keep_build:
-        shutil.rmtree(dist_root)
         shutil.rmtree(build_root)
         if options.test:
             shutil.rmtree(test_root)
