@@ -14,9 +14,6 @@ from .common import test_root, find_tests
 
 from .macos_types import PythonTarget
 
-# Artifacts that need to be cleaned up. DO NOT MODIFY outside of this file.
-_files_to_remove = []
-
 # This is the complete set of defined targets (i.e. potential wheels). By
 # default, all targets are built, but the user may down-select from this set.
 # On macOS (unlike Linux), this is just the set of Python versions targeted.
@@ -27,18 +24,6 @@ python_targets = (
     PythonTarget(3, 12),
     PythonTarget(3, 13),
 )
-
-
-@atexit.register
-def _cleanup():
-    """
-    Removes temporary artifacts on exit.
-    """
-    for f in _files_to_remove:
-        try:
-            os.unlink(f)
-        except FileNotFoundError:
-            gripe(f'Warning: failed to remove \'{f}\'?')
 
 
 def _find_wheel(path, version, python_target):
@@ -145,7 +130,6 @@ def build(options):
     # Create the snopt source archive (and pass along as an environment var).
     snopt_tgz = os.path.join(build_root, 'snopt', 'snopt.tar.gz')
     environment['SNOPT_PATH'] = snopt_tgz
-    _files_to_remove.append(snopt_tgz)
     create_snopt_tgz(snopt_path=options.snopt_path, output=snopt_tgz)
 
     # Build the wheel(s).

@@ -32,7 +32,9 @@ readonly python_executable="$python_prefix/bin/$python"
 "$resource_root/image/provision-build.sh" "$python-"
 readonly real_root=$(readlink -f /tmp/drake-wheel-build)
 
-readonly build_root="$real_root/drake-build"
+"$resource_root/image/provision-build.sh" "$python-"
+
+readonly build_root="/tmp/drake-wheel-build/drake-build"
 
 mkdir -p "$build_root"
 cd "$build_root"
@@ -40,8 +42,8 @@ cd "$build_root"
 # Add wheel-specific bazel options.
 # N.B. When you change anything here, also fix wheel/image/build-drake.sh.
 cat > "$build_root/drake.bazelrc" << EOF
-build --disk_cache=$real_root/bazel/disk_cache
-build --repository_cache=$real_root/bazel/repository_cache
+build --disk_cache=/tmp/drake-wheel-build/bazel/disk_cache
+build --repository_cache=/tmp/drake-wheel-build/bazel/repository_cache
 build --repo_env=DRAKE_WHEEL=1
 build --repo_env=SNOPT_PATH=${SNOPT_PATH}
 build --config=packaging
@@ -60,7 +62,7 @@ cmake "$git_root" \
     -DWITH_USER_LAPACK=OFF \
     -DWITH_USER_ZLIB=OFF \
     -DDRAKE_VERSION_OVERRIDE="${DRAKE_VERSION}" \
-    -DCMAKE_INSTALL_PREFIX="$real_root/drake-dist" \
+    -DCMAKE_INSTALL_PREFIX="/tmp/drake-wheel-build/drake-dist" \
     -DPython_EXECUTABLE="$python_executable"
 make install
 
@@ -80,9 +82,9 @@ find "$build_root" -type d -print0 | xargs -0 chmod u+w
 # "Install" additional tools to build the wheel.
 # -----------------------------------------------------------------------------
 
-ln -nsf "$git_root" "$real_root/drake-src"
+ln -nsf "$git_root" "/tmp/drake-wheel-build/drake-src"
 
-readonly venv_drake="$real_root/drake-src/venv"
+readonly venv_drake="/tmp/drake-wheel-build/drake-src/venv"
 
 ln -s \
     "$build_root/bazel-bin/external/drake+/tools/wheel/strip_rpath" \
@@ -96,11 +98,11 @@ ln -s \
 # Build the Drake wheel.
 # -----------------------------------------------------------------------------
 
-mkdir -p "$real_root/drake-wheel"
+mkdir -p "/tmp/drake-wheel-build/drake-wheel"
 
 cp \
     "$resource_root/image/setup.py" \
-    "$real_root/drake-wheel/setup.py"
+    "/tmp/drake-wheel-build/drake-wheel/setup.py"
 
 export DRAKE_VERSION="$1"
 

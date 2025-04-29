@@ -72,7 +72,8 @@ cp -r -t ${WHEEL_DIR}/pydrake/lib \
     /tmp/drake-wheel-build/drake-dist/lib/libdrake*.so
 
 # MOSEK is "sort of" third party, but is procured as part of Drake's build and
-# ends up in /tmp/drake. It should end up in the same place as libdrake.so.
+# ends up in /tmp/drake-wheel-build/drake-dist/. It should end up in the same
+# place as libdrake.so.
 cp -r -t ${WHEEL_DIR}/pydrake/lib \
     /tmp/drake-wheel-build/drake-dist/lib/libmosek* \
     /tmp/drake-wheel-build/drake-dist/lib/libtbb*
