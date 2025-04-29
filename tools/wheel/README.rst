@@ -96,7 +96,6 @@ debugging purposes and should not be needed in ordinary use.
     various subdirectories under ``${HOME}/.cache/drake-wheel-build`` in a
     unique, per-build subdirectory.
 
-
 Implementation Details
 ----------------------
 
