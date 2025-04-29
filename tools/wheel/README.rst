@@ -129,23 +129,11 @@ was successfully installed.
 On macOS, wheels must be built on the host system. The following directories
 are used:
 
-
-TODO(@Aiden2244) reword to reflect change in structure.
-
-
 - ``/tmp/drake-wheel-build``:
-  Contains most intermediate artifacts.
+  Symlink to the per-build unique build root
 
-- ``/tmp/drake-dist``:
-  Contains the Drake installation used to build the wheel.
-
-- ``/tmp/drake-wheel-test``:
-  Contains a Python virtual environment used to test the wheel.
-
-In addition, the wheel creation script requires that the Drake installation is
-located at ``/tmp/drake``. Since multiple builds may be present, a temporary
-symlink is created at this path to the actual, Python-version-specific
-installation while building the wheel. Therefore, this path must be available.
+- ``${HOME}/.cache/drake-wheel-build
+  Contains the per-build unique build root
 
 Starting from a provisioned wheel building environment (installed via
 ``setup/install_prereqs --developer``), the builder invokes
