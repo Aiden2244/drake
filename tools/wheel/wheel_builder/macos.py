@@ -100,6 +100,9 @@ def build(options):
         die('Nothing to do! (Python version selection '
             'resulted in an empty set of wheels)')
 
+    # Set up build environment.
+    os.system("image/provision-build.sh")
+
     # Sanitize the build/test environment.
     environment = os.environ.copy()
     environment.pop('PYTHONPATH')
@@ -173,7 +176,8 @@ def build(options):
         os.unlink(wheel_root)
 
     if not options.keep_build:
-        shutil.rmtree(build_root)
+        shutil.rmtree(os.path.realpath(build_root))
+        os.unlink(build_root)
         if options.test:
             shutil.rmtree(test_root)
 
