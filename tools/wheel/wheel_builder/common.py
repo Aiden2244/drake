@@ -84,7 +84,6 @@ def create_snopt_tgz(*, snopt_path, output):
         shutil.copy(src=snopt_path, dst=output)
         return
     print('[-] Creating SNOPT archive...', flush=True)
-    os.makedirs(os.path.dirname(output), exist_ok=True)
     tar_buffer = io.BytesIO()
     tar_writer = tarfile.open(mode='w', fileobj=tar_buffer)
 
