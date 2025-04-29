@@ -150,12 +150,24 @@ def build(options):
 
     # Build the wheel(s).
     for python_target in targets_to_build:
+        if os.path.exists('/tmp/drake-wheel-build'):
+            if os.path.islink('/tmp/drake-wheel-build'):
+                os.unlink('/tmp/drake-wheel-build')
+            else:
+                # If it's not a symlink but a directory, that's a problem
+                shutil.rmtree('/tmp/drake-wheel-build')
+
         if os.path.islink(wheel_root):
             os.unlink(wheel_root)
 
-        wheel_versioned_root = os.path.join(
-            build_root, f'python{python_target.version}', 'wheel')
-        os.symlink(wheel_versioned_root, wheel_root)
+        # Provision the build/test environment with a unique directory
+        provision_script = os.path.join(
+            resource_root, 'image', 'provision-build.sh')
+        subprocess.check_call(
+            ['bash', provision_script, f'python{python_target.version}-'],
+            env=environment)
+        os.makedirs(os.path.join('/tmp/drake-wheel-build', 'drake-wheel'), exist_ok=True)
+
 
         build_script = os.path.join(resource_root, 'macos', 'build-wheel.sh')
         build_command = ['bash', build_script]
