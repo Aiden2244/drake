@@ -115,10 +115,6 @@ def build(options):
         die('Nothing to do! (Python version selection '
             'resulted in an empty set of wheels)')
 
-    # Set up build environment.
-    os.system('image/provision-build.sh')
-    os.makedirs(build_root, exist_ok=True)
-
     # Sanitize the build/test environment.
     environment = os.environ.copy()
     environment.pop('PYTHONPATH')
