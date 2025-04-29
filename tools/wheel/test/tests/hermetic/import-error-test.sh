@@ -2,7 +2,7 @@
 
 set -eu -o pipefail
 
-cd "$(mktemp -d)"
+cd "$(mktemp -d -p /tmp/drake-wheel-test)"
 
 root=/tmp/drake-wheel-test/python/lib/python*/site-packages/pydrake
 
