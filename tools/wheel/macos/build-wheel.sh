@@ -29,8 +29,6 @@ readonly python_executable="$python_prefix/bin/$python"
 # -----------------------------------------------------------------------------
 # Build and "install" Drake.
 # -----------------------------------------------------------------------------
-"$resource_root/image/provision-build.sh" "$python-"
-readonly real_root=$(readlink -f /tmp/drake-wheel-build)
 
 "$resource_root/image/provision-build.sh" "$python-"
 

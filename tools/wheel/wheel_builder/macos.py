@@ -133,6 +133,7 @@ def build(options):
     # Create the snopt source archive (and pass along as an environment var).
     snopt_tgz = os.path.join(build_root, 'snopt', 'snopt.tar.gz')
     environment['SNOPT_PATH'] = snopt_tgz
+    os.makedirs(os.path.dirname(snopt_tgz), exist_ok=True)
     create_snopt_tgz(snopt_path=options.snopt_path, output=snopt_tgz)
 
     # Build the wheel(s).
@@ -146,15 +147,6 @@ def build(options):
 
         if os.path.islink(wheel_root):
             os.unlink(wheel_root)
-
-        # Provision the build/test environment with a unique directory
-        provision_script = os.path.join(
-            resource_root, 'image', 'provision-build.sh')
-        subprocess.check_call(
-            ['bash', provision_script, f'python{python_target.version}-'],
-            env=environment)
-        os.makedirs(os.path.join('/tmp/drake-wheel-build', 'drake-wheel'), exist_ok=True)
-
 
         build_script = os.path.join(resource_root, 'macos', 'build-wheel.sh')
         build_command = ['bash', build_script]
