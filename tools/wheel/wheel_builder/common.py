@@ -83,8 +83,8 @@ def create_snopt_tgz(*, snopt_path, output):
     if snopt_path != 'git':
         shutil.copy(src=snopt_path, dst=output)
         return
-    print('[-] Creating SNOPT archive...', flush=True)
 
+    print('[-] Creating SNOPT archive...', flush=True)
     tar_buffer = io.BytesIO()
     tar_writer = tarfile.open(mode='w', fileobj=tar_buffer)
 
