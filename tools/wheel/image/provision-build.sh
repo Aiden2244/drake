@@ -5,5 +5,5 @@
 set -eu -o pipefail
 
 mkdir -p ~/.cache/drake-wheel-build
-readonly d="$(mktemp -d ~/.cache/drake-wheel-build/${1:-}XXXXXXXXXX)"
+readonly d="$(mktemp -d ~/.drake-wheel-build/${1:-}XXXXXXXXXX)"
 ln -nsf "${d}" /tmp/drake-wheel-build
