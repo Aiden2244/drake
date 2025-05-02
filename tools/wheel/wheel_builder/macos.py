@@ -1,7 +1,6 @@
 # This file contains macOS-specific logic used to build the PyPI wheels. See
 # build-wheels for the user interface.
 
-import atexit
 import glob
 import os
 import platform
@@ -16,6 +15,7 @@ from .common import test_root, find_tests
 from .macos_types import PythonTarget
 
 # Scratch space. DO NOT USE outside of this file.
+os.makedirs(os.path.expanduser('~/.cache/drake-wheel-build'), exist_ok=True)
 _scratch_dir = tempfile.TemporaryDirectory(
     dir=os.path.expanduser('~/.cache/drake-wheel-build'), prefix='scratch-')
 
@@ -30,15 +30,6 @@ python_targets = (
     PythonTarget(3, 12),
     PythonTarget(3, 13),
 )
-
-
-@atexit.register
-def _cleanup():
-    """
-    Removes temporary artifacts on exit.
-    """
-    if os.path.isdir(_scratch_dir.name):
-        shutil.rmtree(_scratch_dir.name)
 
 
 def _find_wheel(path, version, python_target):
