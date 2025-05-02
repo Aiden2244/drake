@@ -15,7 +15,6 @@ from .common import test_root, find_tests
 from .macos_types import PythonTarget
 
 # Scratch space. DO NOT USE outside of this file.
-os.makedirs(os.path.expanduser('~/.cache/drake-wheel-build'), exist_ok=True)
 _scratch_dir = tempfile.TemporaryDirectory(
     dir=os.path.expanduser('~/.cache/drake-wheel-build'), prefix='scratch-')
 
