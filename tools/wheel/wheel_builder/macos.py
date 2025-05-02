@@ -106,9 +106,6 @@ def build(options):
         die('Nothing to do! (Python version selection '
             'resulted in an empty set of wheels)')
 
-    # Set up build environment.
-    os.system("image/provision-build.sh")
-
     # Sanitize the build/test environment.
     environment = os.environ.copy()
     environment.pop('PYTHONPATH')
@@ -143,16 +140,6 @@ def build(options):
 
     # Build the wheel(s).
     for python_target in targets_to_build:
-        if os.path.exists('/tmp/drake-wheel-build'):
-            if os.path.islink('/tmp/drake-wheel-build'):
-                os.unlink('/tmp/drake-wheel-build')
-            else:
-                # If it's not a symlink but a directory, that's a problem
-                shutil.rmtree('/tmp/drake-wheel-build')
-
-        if os.path.islink(wheel_root):
-            os.unlink(wheel_root)
-
         build_script = os.path.join(resource_root, 'macos', 'build-wheel.sh')
         build_command = ['bash', build_script]
         build_command.append(options.version)
@@ -173,8 +160,9 @@ def build(options):
         if not options.keep_build:
             shutil.rmtree(os.path.realpath(build_root))
             os.unlink(build_root)
-            if options.test:
-                shutil.rmtree(test_root)
+
+    if options.test and not options.keep_build:
+        shutil.rmtree(test_root)
 
 
 def add_build_arguments(parser):
