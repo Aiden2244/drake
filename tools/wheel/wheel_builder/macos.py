@@ -7,12 +7,18 @@ import os
 import platform
 import shutil
 import subprocess
+import tempfile
 
 from .common import create_snopt_tgz, die, gripe, wheel_name
 from .common import build_root, resource_root, wheel_root, wheelhouse
 from .common import test_root, find_tests
 
 from .macos_types import PythonTarget
+
+# Scratch space. DO NOT USE outside of this file.
+_scratch_dir = tempfile.TemporaryDirectory(
+    dir=os.path.expanduser('~/.cache/drake-wheel-build'), prefix='scratch-')
+
 
 # This is the complete set of defined targets (i.e. potential wheels). By
 # default, all targets are built, but the user may down-select from this set.
