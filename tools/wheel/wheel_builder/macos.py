@@ -170,13 +170,11 @@ def build(options):
         if options.extract:
             shutil.copy2(wheel, options.output_dir)
 
-        os.unlink(wheel_root)
-
-    if not options.keep_build:
-        shutil.rmtree(os.path.realpath(build_root))
-        os.unlink(build_root)
-        if options.test:
-            shutil.rmtree(test_root)
+        if not options.keep_build:
+            shutil.rmtree(os.path.realpath(build_root))
+            os.unlink(build_root)
+            if options.test:
+                shutil.rmtree(test_root)
 
 
 def add_build_arguments(parser):
