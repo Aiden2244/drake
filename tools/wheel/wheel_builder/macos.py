@@ -26,6 +26,14 @@ python_targets = (
 )
 
 
+@atexit.register
+def _cleanup():
+    """
+    Removes temporary artifacts on exit.
+    """
+    pass
+
+
 def _find_wheel(path, version, python_target):
     """
     Returns name of built wheel. Uses `glob` to find it, since trying to
