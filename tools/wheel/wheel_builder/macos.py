@@ -31,17 +31,14 @@ python_targets = (
     PythonTarget(3, 13),
 )
 
-wheel_build_dir = os.path.join(
-    os.path.expanduser('~'), '.cache/drake-wheel-build')
-
 
 @atexit.register
 def _cleanup():
     """
     Removes temporary artifacts on exit.
     """
-    if os.path.isdir(wheel_build_dir):
-        shutil.rmtree(wheel_build_dir)
+    if os.path.isdir(_scratch_dir.name):
+        shutil.rmtree(_scratch_dir.name)
 
 
 def _find_wheel(path, version, python_target):
@@ -149,9 +146,8 @@ def build(options):
     environment['DRAKE_VERSION'] = options.version
 
     # Create the snopt source archive (and pass along as an environment var).
-    snopt_tgz = os.path.join(wheel_build_dir, 'snopt', 'snopt.tar.gz')
+    snopt_tgz = os.path.join(_scratch_dir.name, 'snopt.tar.gz')
     environment['SNOPT_PATH'] = snopt_tgz
-    os.makedirs(os.path.dirname(snopt_tgz), exist_ok=True)
     create_snopt_tgz(snopt_path=options.snopt_path, output=snopt_tgz)
 
     # Build the wheel(s).
@@ -182,6 +178,8 @@ def build(options):
 
         if options.extract:
             shutil.copy2(wheel, options.output_dir)
+
+        os.unlink(wheel_root)
 
     if not options.keep_build:
         shutil.rmtree(os.path.realpath(build_root))
