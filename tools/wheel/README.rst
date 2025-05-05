@@ -19,8 +19,8 @@ environment as one would to build Drake normally).
 There are a small number of dependencies for the the builder scripts to work
 that Drake itself does not require. In order to install these additional
 packages, run the ``setup/install_prereqs`` script with the ``--developer``
-flag. The builder must also be able to write to ``${HOME}``, as this is where the
-build is performed, and to ``/tmp``, as a redirect is created here so that
+flag. The builder must also be able to write to ``${HOME}``, as this is where
+the build is performed, and to ``/tmp``, as a redirect is created here so that
 build artifacts can be referenced via a known path.
 
 The script takes a single, required positional argument, which is used to
