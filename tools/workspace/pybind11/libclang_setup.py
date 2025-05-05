@@ -42,8 +42,8 @@ def add_library_paths(parameters=None):
         version = 15
         try:
             completed_process = subprocess.run(['lsb_release', '-sr'],
-                                            stdout=subprocess.PIPE,
-                                            encoding='utf-8')
+                                               stdout=subprocess.PIPE,
+                                               encoding='utf-8')
             if completed_process.returncode == 0:
                 if completed_process.stdout.strip() == '24.04':
                     version = 17
