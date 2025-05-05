@@ -69,7 +69,8 @@ debugging purposes and should not be needed in ordinary use.
     system. (The Docker cache and tagged images may still be altered.)
 
     On macOS, if ``--keep-build`` is used, the wheel will still be accessible
-    via its build location in ``/tmp/drake-wheel-build/drake-wheel/wheelhouse``.
+    via its build location in
+    ``${HOME}/.drake-wheel-build/<temporary_dir>/drake-wheel/wheelhouse``.
 
     This option automatically implies ``--no-test``.
 
@@ -93,7 +94,7 @@ debugging purposes and should not be needed in ordinary use.
 
 ``-k``, ``--keep-containers`` (macOS only)
     Do not delete the various build trees and artifacts, which can be found in
-    various subdirectories under ``${HOME}/.cache/drake-wheel-build`` in a
+    various subdirectories under ``${HOME}/.drake-wheel-build`` in a
     unique, per-build subdirectory.
 
 Implementation Details
@@ -131,7 +132,7 @@ are used:
 - ``/tmp/drake-wheel-build``:
   Symlink to the per-build unique build root
 
-- ``${HOME}/.cache/drake-wheel-build
+- ``${HOME}/.drake-wheel-build
   Contains the per-build unique build root
 
 Starting from a provisioned wheel building environment (installed via
