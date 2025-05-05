@@ -13,7 +13,10 @@ import subprocess
 import sys
 import tarfile
 
-# Location where most of the build will take place.
+# Location where most of the build will take place. This is a symlink to the
+# actual build directory which a) is unique per build, and b) resides in the
+# user's home directory, where we can be confident that there is enough disk
+# space for a build (since /tmp might be on tmpfs).
 build_root = '/tmp/drake-wheel-build'
 
 # Location where testing of the wheel will take place.
