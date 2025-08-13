@@ -52,6 +52,7 @@ load("//tools/workspace/msgpack_internal:repository.bzl", "msgpack_internal_repo
 load("//tools/workspace/mujoco_menagerie_internal:repository.bzl", "mujoco_menagerie_internal_repository")  # noqa
 load("//tools/workspace/mypy_extensions_internal:repository.bzl", "mypy_extensions_internal_repository")  # noqa
 load("//tools/workspace/mypy_internal:repository.bzl", "mypy_internal_repository")  # noqa
+load("//tools/workspace/nanobind:repository.bzl", "nanobind_repository")  # noqa
 load("//tools/workspace/nanoflann_internal:repository.bzl", "nanoflann_internal_repository")  # noqa
 load("//tools/workspace/nasm:repository.bzl", "nasm_repository")
 load("//tools/workspace/net_sf_jchart2d:repository.bzl", "net_sf_jchart2d_repository")  # noqa
@@ -239,6 +240,8 @@ def add_default_repositories(
         mypy_extensions_internal_repository(name = "mypy_extensions_internal", mirrors = mirrors)  # noqa
     if "mypy_internal" not in excludes:
         mypy_internal_repository(name = "mypy_internal", mirrors = mirrors)
+    if "nanobind" not in excludes:
+        nanobind_repository(name = "nanobind", mirrors = mirrors)
     if "nanoflann_internal" not in excludes:
         nanoflann_internal_repository(name = "nanoflann_internal", mirrors = mirrors)  # noqa
     if "nasm" not in excludes:
@@ -444,6 +447,7 @@ REPOS_EXPORTED = [
     "lcm",
     "meshcat",
     "mosek",
+    "nanobind",
     "opencl",
     "pybind11",
     "pycodestyle",
@@ -470,6 +474,7 @@ def _drake_dep_repositories_impl(module_ctx):
     lcm_repository(name = "lcm", mirrors = mirrors)
     meshcat_repository(name = "meshcat", mirrors = mirrors)
     mosek_repository(name = "mosek", mirrors = mirrors)
+    nanobind_repository(name = "nanobind", mirrors = mirrors)
     opencl_repository(name = "opencl")
     pybind11_repository(name = "pybind11", mirrors = mirrors)
     pycodestyle_repository(name = "pycodestyle", mirrors = mirrors)

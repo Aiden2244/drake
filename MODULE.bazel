@@ -139,6 +139,7 @@ use_repo(
     "lcm",
     "meshcat",
     "mosek",
+    "nanobind",
     "opencl",
     "pybind11",
     "pycodestyle",
